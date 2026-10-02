@@ -1,0 +1,18 @@
+# Build output & dependencies
+.next
+out
+build
+node_modules
+
+# Generated / binary assets
+public/hero-sequence
+public/hero-sharpened
+*.webp
+*.mp3
+*.mp4
+*.jpg
+
+# Lockfiles & generated types
+package-lock.json
+next-env.d.ts
+*.tsbuildinfo
