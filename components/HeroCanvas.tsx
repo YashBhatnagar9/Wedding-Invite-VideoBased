@@ -6,11 +6,11 @@ import { motion } from "framer-motion";
 import { HERO, WEDDING } from "@/lib/wedding";
 
 /* HERO — full-viewport intro video (the "envelope reveal").
-   A muted, auto-playing, inline <video> fills the stage while the invitation
-   itself (gold Ganesha, Sanskrit invocation, names, tagline, date) stays
-   centred on top. A "Skip Intro" control is offered while the clip plays; the
-   "keep scrolling" prompt stays hidden until the video ends or is skipped, then
-   fades in.
+   A muted, auto-playing, inline <video> fills the stage unobstructed. The whole
+   invitation card (gold Ganesha, Sanskrit invocation, names, tagline, date and
+   scroll prompt) stays hidden for the duration of the clip and fades in once
+   the video ends — or the moment a "Skip Intro" control (offered only while the
+   clip plays) is tapped.
 
    Background music is owned by the global MusicPlayer (app/layout.tsx), which
    loops /wedding-song.mp3 and renders the corner Sound On/Off toggle — the hero
@@ -41,12 +41,15 @@ export default function HeroCanvas() {
       {/* Cinematic vignette — keeps the text legible over the footage. */}
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-maroon-950/80 via-transparent to-maroon-950/90" />
 
-      {/* Invitation — gold Ganesha, Sanskrit invocation, names, tagline, date. */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6"
+      {/* Invitation card — gold Ganesha, Sanskrit invocation, names, tagline,
+          date and scroll prompt. Hidden (opacity-0) for the whole intro so the
+          footage is unobstructed, then fades in over 1s once the video ends.
+          `transition-opacity` lives on the base class list so the opacity flip
+          animates on the false → true change. */}
+      <div
+        className={`absolute inset-0 z-20 flex items-center justify-center px-6 transition-opacity duration-1000 ease-in-out ${
+          isVideoEnded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
       >
         <div className="flex w-full max-w-[calc(100%-3rem)] flex-col items-center justify-center rounded-2xl border border-gold-400/50 bg-maroon-950/70 px-5 py-4 text-center shadow-[0_8px_40px_rgba(0,0,0,0.55)] backdrop-blur-md [@media(max-height:600px)]:scale-80 [@media(max-height:450px)]:scale-65">
           <div className="flex h-full w-full flex-col items-center justify-center">
@@ -89,7 +92,7 @@ export default function HeroCanvas() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Skip Intro — offered only while the video is still playing. */}
       {!isVideoEnded && (
